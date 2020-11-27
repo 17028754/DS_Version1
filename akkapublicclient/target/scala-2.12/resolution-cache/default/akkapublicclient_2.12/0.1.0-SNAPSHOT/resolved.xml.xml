@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
+	<info organisation="default"
+		module="akkapublicclient_2.12"
+		revision="0.1.0-SNAPSHOT"
+		status="integration"
+		publication="20201111141918"
+	>
+		<description>
+		akkapublicclient
+		</description>
+	</info>
+	<configurations>
+		<conf name="compile" visibility="public" description=""/>
+		<conf name="runtime" visibility="public" description="" extends="compile"/>
+		<conf name="test" visibility="public" description="" extends="runtime"/>
+		<conf name="provided" visibility="public" description=""/>
+		<conf name="optional" visibility="public" description=""/>
+		<conf name="compile-internal" visibility="private" description="" extends="compile,optional,provided"/>
+		<conf name="runtime-internal" visibility="private" description="" extends="runtime,optional"/>
+		<conf name="test-internal" visibility="private" description="" extends="test,optional,provided"/>
+		<conf name="plugin" visibility="private" description=""/>
+		<conf name="pom" visibility="public" description=""/>
+		<conf name="scala-tool" visibility="private" description=""/>
+	</configurations>
+	<publications>
+		<artifact name="akkapublicclient_2.12" type="pom" ext="pom" conf="pom"/>
+		<artifact name="akkapublicclient_2.12" type="jar" ext="jar" conf="compile"/>
+		<artifact name="akkapublicclient_2.12" type="src" ext="jar" conf="compile" e:classifier="sources"/>
+		<artifact name="akkapublicclient_2.12" type="doc" ext="jar" conf="compile" e:classifier="javadoc"/>
+	</publications>
+	<dependencies>
+		<dependency org="org.scala-lang" name="scala-compiler" rev="2.12.7" conf="scala-tool->default,optional(default)"/>
+		<dependency org="org.scala-lang" name="scala-library" rev="2.12.7" conf="scala-tool->default,optional(default);compile->default(compile)"/>
+		<dependency org="org.scalamacros" name="paradise_2.12.7" rev="2.1.1" conf="plugin->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-actor-typed_2.12" rev="2.6.10" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-remote_2.12" rev="2.6.10" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-cluster-typed_2.12" rev="2.6.10" conf="compile->default(compile)"/>
+		<dependency org="ch.qos.logback" name="logback-classic" rev="1.2.3" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-serialization-jackson_2.12" rev="2.6.10" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-discovery_2.12" rev="2.6.10" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-cluster-sharding_2.12" rev="2.6.10" conf="compile->default(compile)"/>
+		<dependency org="org.fourthline.cling" name="cling-core" rev="2.1.2" conf="compile->default(compile)"/>
+		<dependency org="org.fourthline.cling" name="cling-support" rev="2.1.2" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe" name="config" rev="1.4.1" conf="compile->default(compile)"/>
+		<dependency org="org.scalafx" name="scalafx_2.12" rev="8.0.192-R14" conf="compile->default(compile)"/>
+		<dependency org="org.scalafx" name="scalafxml-core-sfx8_2.12" rev="0.5" conf="compile->default(compile)"/>
+		<dependency org="com.lightbend.akka.management" name="akka-management_2.12" rev="1.0.9" conf="compile->default(compile)"/>
+		<dependency org="com.lightbend.akka.management" name="akka-management-cluster-http_2.12" rev="1.0.9" conf="compile->default(compile)"/>
+		<dependency org="com.lightbend.akka.management" name="akka-management-cluster-bootstrap_2.12" rev="1.0.9" conf="compile->default(compile)"/>
+	</dependencies>
+</ivy-module>

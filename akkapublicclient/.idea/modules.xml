@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/akkapublicclient.iml" filepath="$PROJECT_DIR$/.idea/modules/akkapublicclient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/akkapublicclient-build.iml" filepath="$PROJECT_DIR$/.idea/modules/akkapublicclient-build.iml" />
+      <module fileurl="file://C:/Program Files/Java/javafx-sdk-11.0.2/lib/lib.iml" filepath="C:/Program Files/Java/javafx-sdk-11.0.2/lib/lib.iml" />
+    </modules>
+  </component>
+</project>
