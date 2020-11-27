@@ -9,130 +9,175 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="tetris" prefHeight="720.0" prefWidth="1280.0" styleClass="background" stylesheets="@../style/Gaiabg.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hep88.view.GaiaGameController">
+<AnchorPane fx:id="tetris" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="boardBackground" stylesheets="@../style/style.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hep88.view.GaiaGameController">
     <children>
-        <GridPane fx:id="tetrisBoard" alignment="CENTER" layoutX="526.0" layoutY="116.0" opacity="0.7" prefHeight="561.0" prefWidth="301.0">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-        </GridPane>
-        <VBox layoutX="852.0" layoutY="98.0" prefHeight="23.0" prefWidth="111.0" spacing="20.0">
+      <Button layoutX="613.0" layoutY="61.0" mnemonicParsing="false" onAction="#handleBack" text="Back" />
+      <AnchorPane layoutX="657.0" layoutY="21.0" prefHeight="647.0" prefWidth="590.0">
          <children>
-                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="269.0" text="Score" textAlignment="CENTER" textFill="WHITE">
-                    <font>
-                        <Font size="18.0" />
-                    </font>
-            </Label>
-                <Label fx:id="score" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="269.0" text="0" textAlignment="CENTER" textFill="WHITE">
-                    <font>
-                        <Font size="18.0" />
-                    </font>
-            </Label>
+            <Button alignment="BOTTOM_RIGHT" contentDisplay="BOTTOM" mnemonicParsing="false" opacity="0.0" />
+            <VBox layoutX="385.0" layoutY="90.0" prefHeight="175.0" prefWidth="158.0" AnchorPane.rightAnchor="46.99999999999997">
+               <children>
+                  <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="175.0" text="Next Piece" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic" size="20.0" />
+                     </font>
+                  </Label>
+                  <GridPane fx:id="enemyNextPiece" prefHeight="139.0" prefWidth="181.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                  </GridPane>
+               </children>
+            </VBox>
+            <VBox layoutX="403.0" layoutY="372.0" prefHeight="86.0" prefWidth="126.0" spacing="20.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="25.0" prefWidth="128.0" text="Enemy Score" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="enemyScore" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="269.0" styleClass="textStyle" text="0" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <GridPane fx:id="enemytetrisBoard" alignment="CENTER" layoutX="30.0" layoutY="80.0" opacity="0.7" prefHeight="532.0" prefWidth="287.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+            </GridPane>
          </children>
-        </VBox>
-        <GridPane fx:id="nextPieceBoard" layoutX="1021.0" layoutY="159.0" prefHeight="125.0" prefWidth="137.0">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-        </GridPane>
-        <Label layoutX="1038.0" layoutY="98.0" text="Next Piece" textFill="WHITE">
-            <font>
-                <Font size="18.0" />
-            </font></Label>
-        <Button layoutX="1336.0" layoutY="729.0" mnemonicParsing="false" />
-        <GridPane layoutX="848.0" layoutY="366.0" prefHeight="157.0" prefWidth="156.0">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="86.0" minWidth="10.0" prefWidth="66.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="10.0" prefWidth="116.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <children>
-                <Label text="Move Left" textFill="WHITE" GridPane.columnIndex="1" />
-                <Label text="Move Right" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label text="Hard Drop" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Label text="Left" textFill="WHITE" />
-                <Label text="Right" textFill="WHITE" GridPane.rowIndex="1" />
-                <Label text="Enter" textFill="WHITE" GridPane.rowIndex="4" />
-                <Label text="Down" textFill="WHITE" GridPane.rowIndex="2" />
-                <Label text="Up" textFill="WHITE" GridPane.rowIndex="3" />
-                <Label text="Move Down" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label text="Rotate" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Label text="P" textFill="WHITE" GridPane.rowIndex="5" />
-                <Label text="Pause Game" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            </children>
-        </GridPane>
-        <Label alignment="CENTER" layoutX="866.0" layoutY="321.0" prefHeight="25.0" prefWidth="84.0" text="Controller" textAlignment="CENTER" textFill="WHITE">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Label>
-        <Label fx:id="showPaused" alignment="CENTER" layoutX="519.0" layoutY="411.0" prefHeight="100.0" prefWidth="329.0">
-            <font>
-                <Font size="36.0" />
-            </font>
-        </Label>
-      <VBox layoutX="394.0" layoutY="98.0" prefHeight="23.0" prefWidth="111.0" spacing="20.0">
+      </AnchorPane>
+      <AnchorPane disable="true" layoutX="23.0" layoutY="21.0" prefHeight="679.0" prefWidth="614.0">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="269.0" text="Score" textAlignment="CENTER" textFill="WHITE">
+            <Button alignment="BOTTOM_RIGHT" contentDisplay="BOTTOM" mnemonicParsing="false" opacity="0.0" />
+            <Label fx:id="enemyShowPaused" alignment="CENTER" prefHeight="87.0" prefWidth="155.0">
                <font>
-                  <Font size="18.0" />
+                  <Font size="36.0" />
                </font>
             </Label>
-            <Label fx:id="enemyScore" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="269.0" text="0" textAlignment="CENTER" textFill="WHITE">
+            <GridPane fx:id="tetrisBoard" alignment="CENTER" layoutX="280.0" layoutY="80.0" opacity="0.7" prefHeight="532.0" prefWidth="287.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+            </GridPane>
+            <VBox layoutX="53.0" layoutY="90.0" prefHeight="175.0" prefWidth="158.0">
+               <children>
+                  <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="175.0" text="Next Piece" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic" size="20.0" />
+                     </font>
+                  </Label>
+                  <GridPane fx:id="nextPieceBoard" prefHeight="139.0" prefWidth="158.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                  </GridPane>
+               </children>
+            </VBox>
+            <VBox layoutX="68.0" layoutY="377.0" prefHeight="88.0" prefWidth="128.0" spacing="20.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="23.0" prefWidth="126.0" text="Your Score" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="score" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="269.0" text="0" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <Label fx:id="showPaused" alignment="CENTER" layoutX="343.0" layoutY="297.0" prefHeight="98.0" prefWidth="547.0">
                <font>
-                  <Font size="18.0" />
+                  <Font size="36.0" />
                </font>
             </Label>
          </children>
-      </VBox>
-      <Button layoutX="102.0" layoutY="62.0" mnemonicParsing="false" onAction="#handleBack" text="Back to lobby" />
+      </AnchorPane>
 <!--      <Button layoutX="870.0" layoutY="259.0" mnemonicParsing="false" onAction="#handleGaiaRules" text="GameRules" />-->
 <!--      <Button layoutX="109.0" layoutY="86.0" mnemonicParsing="false" onAction="#handleBack" text="Back" />-->
     </children>

@@ -56,11 +56,28 @@ object Client extends JFXApp {
   joinLocalSeedNode()
 
   // fxml loader (UI)
-  val loader = new FXMLLoader(null, NoDependencyResolver)
-  loader.load(getClass.getResourceAsStream("view/MainWindowTest.fxml"))
-  val border: scalafx.scene.layout.BorderPane = loader.getRoot[javafx.scene.layout.BorderPane]()
+//  val loader = new FXMLLoader(null, NoDependencyResolver)
+//  loader.load(getClass.getResourceAsStream("view/MainWindowTest.fxml"))
+//  val border: scalafx.scene.layout.BorderPane = loader.getRoot[javafx.scene.layout.BorderPane]()
+//  val control = loader.getController[com.hep88.view.MainWindowController#Controller]()
+//  control.chatClientRef = Option(userRef)
+//  stage = new PrimaryStage() {
+//    scene = new Scene(){
+//      root = border
+//    }
+//  }
+//
+//  stage.onCloseRequest = handle( {
+//    mainSystem.terminate
+//  })
+
+  val rootResource: URL = getClass.getResource("view/MainWindowTest.fxml")
+  val loader: FXMLLoader = new FXMLLoader(rootResource, NoDependencyResolver)
+  loader.load()
+  val border = loader.getRoot[javafx.scene.layout.BorderPane]
   val control = loader.getController[com.hep88.view.MainWindowController#Controller]()
-  control.chatClientRef = Option(userRef)
+  control.chatClientRef = Option(Client.userRef)
+
   stage = new PrimaryStage() {
     scene = new Scene(){
       root = border
@@ -70,6 +87,5 @@ object Client extends JFXApp {
   stage.onCloseRequest = handle( {
     mainSystem.terminate
   })
-
 
 }

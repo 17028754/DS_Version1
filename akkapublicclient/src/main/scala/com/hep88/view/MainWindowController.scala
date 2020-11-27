@@ -9,8 +9,6 @@ import scalafx.scene.control.{Alert, ButtonType, Label, ListView, TextField}
 import com.hep88.{ChatClient, Client, Client1, User}
 import scalafx.collections.ObservableBuffer
 import scalafx.Includes._
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.scene.Scene
 import scalafx.scene.control.Alert.AlertType
 
 @sfxml
@@ -37,16 +35,6 @@ private val txtMessage: TextField) {
   def updateList(x: Iterable[User]): Unit ={
     listUser.items = new ObservableBuffer[User]() ++= x
   }
-
-//  // Join Game (NOT LOBBY) BUTTON
-//  def handleSend(actionEvent: ActionEvent): Unit ={
-//
-//    // Join Game (NOT LOBBY) function
-//    if (listUser.selectionModel().selectedIndex.value >= 0){
-//      Client.userRef ! ChatClient.SendMessageL(listUser.selectionModel().selectedItem.value.ref,
-//        txtMessage.text())
-//    }
-//  }
 
 
   // Create game
@@ -111,13 +99,6 @@ private val txtMessage: TextField) {
   def displayInvitationResult(result: Boolean): Unit = {
     if(result == true){
       chatClientRef map (_ ! ChatClient.GameOmission(clientName, clientRef, txtName.text.value, Client.userRef))
-//      // Store opponent client ref in object for game controller to reference
-//      // Store additional component for game omission in the server
-//      ClientRef.clientRef = ClientRef.toOption(clientRef)
-//      ClientRef.clientName = clientName
-//      ClientRef.ownRef = ClientRef.toOption(Client.userRef)
-//      ClientRef.ownName = txtName.text.value
-//      ClientRef.serverRef = chatClientRef
       new Alert(AlertType.Information){
         initOwner(stage)
         title = "Information Dialog"
@@ -135,19 +116,12 @@ private val txtMessage: TextField) {
   }
 
 
-
-//  // Testing for client ref
-//  def debug(actionEvent: ActionEvent): Unit = {
-//    if (listUser.selectionModel().selectedIndex.value >= 0){
-//      Client.userRef ! ChatClient.SendMessageL(clientRef, "Debug part")
-//    }
-//  }
-
-  // Testing to start game, launch fxml on both clients
+  // Initiate game to launch for both clients
   def startGame(actionEvent: ActionEvent): Unit = {
     Client.userRef ! ChatClient.StartGame(clientRef)
   }
 
+  // Load the game fxml and store the appropriate information for game omission/communication
   def loadGame(): Unit = {
   // Store opponent client ref in object for game controller to reference
   // Store additional component for game omission in the server

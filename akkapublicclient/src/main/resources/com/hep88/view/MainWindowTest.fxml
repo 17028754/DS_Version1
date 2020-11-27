@@ -3,9 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -13,80 +10,32 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hep88.view.MainWindowController">
-   <top>
-      <MenuBar BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hep88.view.MainWindowController">
    <center>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="landingBackground" stylesheets="@../style/style.css" BorderPane.alignment="CENTER">
          <children>
-            <GridPane layoutX="129.0" layoutY="81.0" prefHeight="97.0" prefWidth="228.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="127.0" minWidth="10.0" prefWidth="120.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="106.0" minWidth="10.0" prefWidth="102.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="42.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="25.0" minHeight="10.0" prefHeight="21.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label text="Name" />
-                  <TextField fx:id="txtName" GridPane.columnIndex="1" />
-                  <Button mnemonicParsing="false" onAction="#handleJoin" text="Join Server" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label text="Status" GridPane.rowIndex="2" />
-                  <Label fx:id="lblStatus" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-               </children>
-            </GridPane>
-            <GridPane layoutX="60.0" layoutY="109.0" prefHeight="32.0" prefWidth="219.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Button mnemonicParsing="false" onAction="#handleCreateGame" text="Create" textAlignment="CENTER" />
-                  <Button mnemonicParsing="false" prefWidth="51.0" text="Join" GridPane.columnIndex="1" />
-                  <Button mnemonicParsing="false" prefWidth="51.0" text="Leave" GridPane.columnIndex="2" />
-               </children>
-            </GridPane>
-            <ListView fx:id="listMessage" layoutX="330.0" layoutY="156.0" prefHeight="170.0" prefWidth="200.0" />
-            <ListView fx:id="listUser" layoutX="60.0" layoutY="156.0" prefHeight="170.0" prefWidth="200.0" />
-            <ListView fx:id="listRules" layoutX="330.0" layoutY="11.0" prefHeight="141.0" prefWidth="200.0" />
-            <GridPane layoutX="330.0" layoutY="327.0" prefHeight="32.0" prefWidth="242.0">
+            <GridPane layoutX="566.0" layoutY="410.0" prefHeight="32.0" prefWidth="219.0">
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="10.0" prefWidth="116.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="10.0" prefWidth="126.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Button fx:id="Ready" mnemonicParsing="false" text="Ready" textAlignment="CENTER" />
-                  <Button fx:id="Start" mnemonicParsing="false" onAction="#startGame" prefHeight="25.0" prefWidth="82.0" text="Start Game" GridPane.columnIndex="1" />
+                  <Button mnemonicParsing="false" onAction="#handleCreateGame" text="Invite" textAlignment="CENTER" />
+                  <Button mnemonicParsing="false" prefWidth="51.0" text="Leave" GridPane.columnIndex="1" />
                </children>
             </GridPane>
+            <ListView fx:id="listMessage" layoutX="473.0" layoutY="456.0" prefHeight="170.0" prefWidth="335.0" />
+            <ListView fx:id="listUser" layoutX="473.0" layoutY="280.0" prefHeight="109.0" prefWidth="335.0" />
+            <ListView fx:id="listRules" layoutX="62.0" layoutY="44.0" prefHeight="141.0" prefWidth="200.0" />
+            <AnchorPane layoutX="441.0" layoutY="14.0" prefHeight="200.0" prefWidth="400.0" styleClass="background" stylesheets="@../style/logo.css" />
+            <TextField fx:id="txtName" layoutX="566.0" layoutY="241.0" promptText="Enter your name" />
+            <Button layoutX="839.0" layoutY="243.0" mnemonicParsing="false" onAction="#handleJoin" text="Join Server" />
+            <Button fx:id="Start" layoutX="599.0" layoutY="637.0" mnemonicParsing="false" onAction="#startGame" prefHeight="25.0" prefWidth="82.0" text="Start Game" />
+            <Label fx:id="lblStatus" layoutX="976.0" layoutY="247.0" text="Label" />
+            <Label layoutX="935.0" layoutY="247.0" text="Status" />
          </children>
       </AnchorPane>
    </center>

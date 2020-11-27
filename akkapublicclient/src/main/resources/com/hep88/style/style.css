@@ -2,5 +2,32 @@
     -fx-background-size: 1280px 720px;
     -fx-background-repeat: no-repeat;
     -fx-background-position: center
+}
 
+.rootBackground {
+    -fx-background-image: url("../img/lightbg.jpg");
+    -fx-background-size: 1280px 720px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center
+}
+
+.landingBackground {
+    -fx-background-image: url("../img/tet.png");
+    -fx-background-size: 1280px 720px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center
+}
+
+.logo {
+    -fx-background-image: url("../img/tetlogo.png");
+    -fx-background-size: 400px 200px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center
+}
+
+.boardBackground {
+    -fx-background-image: url("../img/bg.png");
+    -fx-background-size: 1280px 720px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center
 }
