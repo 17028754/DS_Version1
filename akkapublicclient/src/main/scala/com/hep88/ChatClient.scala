@@ -15,6 +15,8 @@ import akka.cluster.ClusterEvent.ReachableMember
 import akka.cluster.ClusterEvent.UnreachableMember
 import akka.cluster.ClusterEvent.MemberEvent
 import akka.actor.Address
+import com.hep88.model.GaiaGame
+import scalafx.scene.shape.Rectangle
 import scalafxml.core.{FXMLLoader, NoDependencyResolver}
 
 
@@ -25,21 +27,20 @@ object ChatClient {
     case class StartJoin(name: String) extends Command
 
     // Help start to check for omission during game
-//    case class GameOmission(name1: String, target1: ActorRef[ChatClient.Command]) extends Command
-  case class GameOmission(name1: String, target1: ActorRef[ChatClient.Command], name2: String, target2: ActorRef[ChatClient.Command]) extends Command
+    case class GameOmission(name1: String, target1: ActorRef[ChatClient.Command], name2: String, target2: ActorRef[ChatClient.Command]) extends Command
 
     // Sending and receive invitation
-   final case class SendInvitation(target: ActorRef[ChatClient.Command], name: String) extends Command
-   final case class ReceiveInvitation(name: String, from: ActorRef[ChatClient.Command]) extends Command
+    final case class SendInvitation(target: ActorRef[ChatClient.Command], name: String) extends Command
+    final case class ReceiveInvitation(name: String, from: ActorRef[ChatClient.Command]) extends Command
     // Accept and rejecting invitation
     final case class AcceptInvitation(target: ActorRef[ChatClient.Command]) extends Command
     final case class RejectInvitation(target: ActorRef[ChatClient.Command]) extends Command
-  // Display accepted/rejected invitation
-  final case class DisplayInvitationResult(result: Boolean) extends Command
+    // Display accepted/rejected invitation
+    final case class DisplayInvitationResult(result: Boolean) extends Command
 
-  // Starting game
-   final case class StartGame(target: ActorRef[ChatClient.Command]) extends Command
-   final case class ClientStartR(target: ActorRef[ChatClient.Command]) extends Command
+    // Starting game
+    final case class StartGame(target: ActorRef[ChatClient.Command]) extends Command
+    final case class ClientStartR(target: ActorRef[ChatClient.Command]) extends Command
 
 
 
@@ -66,6 +67,30 @@ object ChatClient {
 
   // Remove omission list in server
   case class GameCompleted(name1: String, target1: ActorRef[ChatClient.Command], name2: String, target2: ActorRef[ChatClient.Command]) extends Command
+
+  // Animation for next piece - tell other client (part 1)
+  final case class TellNextPiece(target: ActorRef[ChatClient.Command], nextPiece: List[List[Array[Int]]]) extends Command
+  final case class ReceiveNextPiece(nextPiece: List[List[Array[Int]]]) extends Command
+
+  // Animation for next piece - tell other client (part 2)
+  final case class ClearNextPiece(target: ActorRef[ChatClient.Command]) extends Command
+  final case class ReceiveClearNextPiece() extends Command
+
+  // Animation for board - tell other client
+  final case class CurrentBoardPiece(target: ActorRef[ChatClient.Command], currentPiece: List[Array[Int]], currentX: Int, currentY: Int) extends Command
+  final case class ReceiveCurrentBoardPiece(currentPiece: List[Array[Int]], currentX: Int, currentY: Int) extends Command
+
+  // Animation for board - tell other client refresh board
+  final case class RefreshEnemyBoard(target: ActorRef[ChatClient.Command], board: Array[Array[Int]]) extends Command
+  final case class ReceiveRefreshEnemyBoard(board: Array[Array[Int]]) extends Command
+
+  // Animation for board - tell other client to paint piece to board
+  final case class PaintEnemyBoardPiece(target: ActorRef[ChatClient.Command], currentPiece: List[Array[Int]], currentX: Int, currentY: Int) extends Command
+  final case class ReceiveEnemyBoardPiece(currentPiece: List[Array[Int]], currentX: Int, currentY: Int) extends Command
+
+  // Animation for board - tell other client to clear piece from board
+  final case class ClearEnemyBoardPiece(target: ActorRef[ChatClient.Command], currentPiece: List[Array[Int]], currentX: Int, currentY: Int, board: Array[Array[Int]]) extends Command
+  final case class ReceiveClearEnemyBoardPiece(currentPiece: List[Array[Int]], currentX: Int, currentY: Int, board: Array[Array[Int]]) extends Command
 
 
   final case object FindTheServer extends Command
@@ -202,6 +227,71 @@ object ChatClient {
             case GameCompleted(name1, target1, name2, target2) =>
               remoteOpt.map ( _! ChatServer.GameCompleted(name1, target1, name2, target2))
               Behaviors.same
+
+
+
+
+              // Animation - tell next piece
+            case TellNextPiece(target, nextPiece)  =>
+              target ! ReceiveNextPiece(nextPiece)
+              Behaviors.same
+            case ReceiveNextPiece(nextPiece) =>
+              Platform.runLater{
+                Client1.control.receiveEnemyNextPiece(nextPiece)
+              }
+              Behaviors.same
+            case ClearNextPiece(target) =>
+              target ! ReceiveClearNextPiece()
+              Behaviors.same
+            case ReceiveClearNextPiece() =>
+              Platform.runLater{
+                Client1.control.clearEnemyNextPiece()
+              }
+              Behaviors.same
+
+             // Animation - tell current piece on board (first piece painted on the very top)
+            case CurrentBoardPiece(target, current, x, y) =>
+              target ! ReceiveCurrentBoardPiece(current,x ,y)
+              Behaviors.same
+            case ReceiveCurrentBoardPiece(current,x ,y) =>
+              Platform.runLater{
+                Client1.control.printEnemyCurrentPiece1(current,x ,y)
+              }
+              Behaviors.same
+
+              // Animation - tell client to refresh board
+            case RefreshEnemyBoard(target, board) =>
+              target ! ReceiveRefreshEnemyBoard(board)
+              Behaviors.same
+            case ReceiveRefreshEnemyBoard(board) =>
+              Platform.runLater{
+                Client1.control.refreshEnemyBoard(board)
+              }
+              Behaviors.same
+
+              // Animation - tell client to paint piece to board
+            case PaintEnemyBoardPiece(target, currentPiece, currentX, currentY) =>
+              target ! ReceiveEnemyBoardPiece(currentPiece, currentX, currentY)
+              Behaviors.same
+            case ReceiveEnemyBoardPiece(currentPiece, x, y) =>
+              Platform.runLater{
+                Client1.control.paintEnemyPiece(currentPiece, x, y)
+              }
+              Behaviors.same
+
+             // Animation - tell client to clear piece from board
+            case ClearEnemyBoardPiece(target, currentPiece, currentX, currentY, board) =>
+              target ! ReceiveClearEnemyBoardPiece(currentPiece, currentX, currentY, board)
+              Behaviors.same
+            case ReceiveClearEnemyBoardPiece(currentPiece, currentX, currentY, board) =>
+              Platform.runLater{
+                Client1.control.clearEnemyPiece(currentPiece, currentX, currentY, board)
+              }
+              Behaviors.same
+
+
+
+
 
               // Updating the list of players connected in the game lobby
             case MemberList(list: Iterable[User]) =>

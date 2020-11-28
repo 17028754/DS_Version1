@@ -17,6 +17,7 @@ private val lblStatus: Label, private val listUser: ListView[User], private val 
 private val listMessage: ListView[String],
 private val txtMessage: TextField) {
 
+    var startGame: Boolean = false
 
     var chatClientRef: Option[ActorRef[ChatClient.Command]] = None
 
@@ -47,7 +48,7 @@ private val txtMessage: TextField) {
       new Alert(AlertType.Warning) {
         initOwner(stage)
         title = "Warning Dialog"
-        headerText = "Unable to Start Game!"
+        headerText = "Unable to Invite to Game!"
         contentText = "Please choose other player's username!"
       }.showAndWait()
     }
@@ -99,6 +100,7 @@ private val txtMessage: TextField) {
   def displayInvitationResult(result: Boolean): Unit = {
     if(result == true){
       chatClientRef map (_ ! ChatClient.GameOmission(clientName, clientRef, txtName.text.value, Client.userRef))
+      startGame = true
       new Alert(AlertType.Information){
         initOwner(stage)
         title = "Information Dialog"
@@ -118,18 +120,27 @@ private val txtMessage: TextField) {
 
   // Initiate game to launch for both clients
   def startGame(actionEvent: ActionEvent): Unit = {
-    Client.userRef ! ChatClient.StartGame(clientRef)
+    if (startGame == false) {
+      new Alert(AlertType.Warning) {
+        initOwner(stage)
+        title = "Warning Dialog"
+        headerText = "Unable to Start Game!"
+        contentText = "Please invite other player to be eligible to start game!"
+      }.showAndWait()
+    }else{
+      Client.userRef ! ChatClient.StartGame(clientRef)
+    }
   }
 
   // Load the game fxml and store the appropriate information for game omission/communication
   def loadGame(): Unit = {
-  // Store opponent client ref in object for game controller to reference
-  // Store additional component for game omission in the server
-  ClientRef.clientRef = ClientRef.toOption(clientRef)
-  ClientRef.clientName = clientName
-  ClientRef.ownRef = ClientRef.toOption(Client.userRef)
-  ClientRef.ownName = txtName.text.value
-  ClientRef.serverRef = chatClientRef
+    // Store opponent client ref in object for game controller to reference
+    // Store additional component for game omission in the server
+    ClientRef.clientRef = ClientRef.toOption(clientRef)
+    ClientRef.clientName = clientName
+    ClientRef.ownRef = ClientRef.toOption(Client.userRef)
+    ClientRef.ownName = txtName.text.value
+    ClientRef.serverRef = chatClientRef
     Client1
   }
 

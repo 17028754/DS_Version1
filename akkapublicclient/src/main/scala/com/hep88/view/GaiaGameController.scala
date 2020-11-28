@@ -1,8 +1,7 @@
 package com.hep88.view
 
 import akka.actor.typed.ActorRef
-import com.hep88.Client.stage
-import com.hep88.{ChatClient, Client, Client1, ClientRef}
+import com.hep88.{ChatClient, Client, ClientRef}
 import com.hep88.model.{GaiaGame, ScalaFXSound}
 import scalafx.Includes._
 import scalafx.animation._
@@ -17,18 +16,24 @@ import scalafxml.core.macros.sfxml
 
 @sfxml
 class GaiaGameController(
-  tetris: AnchorPane,
-  tetrisBoard: GridPane,
-  nextPieceBoard: GridPane,
-  score: Label,
-  showPaused: Label,
-  enemyScore: Label
- ) extends ScalaFXSound {
+                          tetris: AnchorPane,
+                          tetrisBoard: GridPane,
+                          enemytetrisBoard: GridPane,
+                          nextPieceBoard: GridPane,
+                          enemyNextPieceBoard: GridPane,
+                          score: Label,
+                          showPaused: Label,
+                          enemyScore: Label
+                        ) extends ScalaFXSound {
 
   var game = new GaiaGame
   var gameOver = false
   var rectangles: List[List[Rectangle]] = List()
   var nextPieceRectangles: List[List[Rectangle]] = List()
+  var enemyNextPieceRectangles: List[List[Rectangle]] = List()
+  var enemyNextPiece: List[List[Array[Int]]] = List()
+  var enemyRectangles: List[List[Rectangle]] = List()
+  var test: Unit = None
   // control
   var pause = false
   var leftPressed = false
@@ -47,26 +52,26 @@ class GaiaGameController(
   var gameOverOpponent = false
   var opponentScore = 0
 
-//  // if pressed the rules, pause the game and show the rules
-//  def handleGaiaRules(action: ActionEvent): Unit = {
-//    if (!pause && !gameOver) {
-//      timer.stop
-//      showPaused.setText("Game Paused")
-//      pause = true
-//      MainApp.showGaiaRules()
-//      timer.start
-//      showPaused.setText("")
-//      pause = false
-//    }
-//    else {
-//      // else create a new game straight
-//      if (!pause && gameOver) {
-//        timer.stop
-//        MainApp.showGaiaRules()
-//        MainApp.showMain()
-//      }
-//    }
-//  }
+  //  // if pressed the rules, pause the game and show the rules
+  //  def handleGaiaRules(action: ActionEvent): Unit = {
+  //    if (!pause && !gameOver) {
+  //      timer.stop
+  //      showPaused.setText("Game Paused")
+  //      pause = true
+  //      MainApp.showGaiaRules()
+  //      timer.start
+  //      showPaused.setText("")
+  //      pause = false
+  //    }
+  //    else {
+  //      // else create a new game straight
+  //      if (!pause && gameOver) {
+  //        timer.stop
+  //        MainApp.showGaiaRules()
+  //        MainApp.showMain()
+  //      }
+  //    }
+  //  }
 
 
 
@@ -92,7 +97,7 @@ class GaiaGameController(
     gameOverSoundEffect()
   }
 
-  // create every single rectangles for tetrisBoard
+  // create every single rectangles for OWN tetrisBoard
   for (row <- 0 until game.gameBoard.rows) {
     var tmpRec: List[Rectangle] = List()
     for (col <- 0 until game.gameBoard.columns) {
@@ -154,7 +159,70 @@ class GaiaGameController(
     rectangles = rectangles ++: List(tmpRec)
   }
 
-  // create every single rectangles for nextPieceBoard
+  // create every single rectangles for ENEMY tetrisBoard
+  for (row <- 0 until game.gameBoard.rows) {
+    var tmpRec: List[Rectangle] = List()
+    for (col <- 0 until game.gameBoard.columns) {
+      if (col == 0 || col == game.gameBoard.columns - 1) {
+        //sides pink
+        tmpRec = tmpRec :+ new Rectangle {
+          width = 27
+          height = 27
+          fill = "pink"
+        }
+      }
+      else if (row >= game.gameBoard.rows - 3 && row <= game.gameBoard.rows - 1) {
+        //bottom 3 rows
+        if (col >= game.gameBoard.columns - 7 && col <= game.gameBoard.columns - 4) {
+          //tree branch
+          tmpRec = tmpRec :+ new Rectangle {
+            width = 27
+            height = 27
+            fill= "brown"
+          }
+        }
+        else if (row == game.gameBoard.rows - 1) {
+          if (col < 3 || col > 6) {
+            //bottom pink
+            tmpRec = tmpRec :+ new Rectangle {
+              width = 27
+              height = 27
+              fill = "pink"
+            }
+          }
+        }
+        else {
+          tmpRec = tmpRec :+ new Rectangle {
+            //white for last 3 bottom rows
+            width = 27
+            height = 27
+            fill ="white"
+          }
+        }
+      }
+      else if (row == 0) {
+        //at the top most pink
+        tmpRec = tmpRec :+ new Rectangle {
+          width = 27
+          height = 27
+          fill = "pink"
+        }
+      }
+      else {
+        tmpRec = tmpRec :+ new Rectangle {
+          //white
+          width = 27
+          height = 27
+          fill = "white"
+        }
+      }
+      enemytetrisBoard.add(tmpRec(col), col, row)
+    }
+    enemyRectangles = enemyRectangles ++: List(tmpRec)
+  }
+
+
+  // create every single rectangles for OWN nextPieceBoard
   for (row <- 0 until 4) {
     var tmpRec: List[Rectangle] = List()
     for (col <- 0 until 4) {
@@ -169,8 +237,40 @@ class GaiaGameController(
     nextPieceRectangles = nextPieceRectangles ++: List(tmpRec)
   }
 
-//  Event Handler
-//  Controls
+  // create every single rectangles for ENEMY nextPieceBoard
+  for (row <- 0 until 4) {
+    var tmpRec: List[Rectangle] = List()
+    for (col <- 0 until 4) {
+      tmpRec = tmpRec :+ new Rectangle {
+        width = 27
+        height = 27
+        fill = "white"
+        opacity = 0.5
+      }
+      enemyNextPieceBoard.add(tmpRec(col), col, row)
+    }
+    enemyNextPieceRectangles = enemyNextPieceRectangles ++: List(tmpRec)
+  }
+
+  def receiveEnemyNextPiece(nextPieceRectangles: List[List[Array[Int]]]): Unit ={
+    enemyNextPiece = nextPieceRectangles
+    if (enemyNextPiece != Nil){
+      for (a <- enemyNextPiece.head.indices) {
+        enemyNextPieceRectangles(enemyNextPiece.head(a)(1))(enemyNextPiece.head(a)(0) + 1).fill = "red"
+      }
+    }
+  }
+
+  def clearEnemyNextPiece(): Unit = {
+    if (enemyNextPiece != Nil) {
+      for (a <- enemyNextPiece.head.indices) {
+        enemyNextPieceRectangles(enemyNextPiece.head(a)(1))(enemyNextPiece.head(a)(0)+1).fill = "white"
+      }
+    }
+  }
+
+  //  Event Handler
+  //  Controls
   tetris.onKeyPressed = (e: KeyEvent) => {
     if (e.code == KeyCode.Left) leftPressed = true
     if (e.code == KeyCode.Right) rightPressed = true
@@ -266,6 +366,64 @@ class GaiaGameController(
     refreshBoard()
   }
 
+  def printEnemyCurrentPiece1(nextPieceRectangles: List[Array[Int]], currentX: Int, currentY: Int): Unit = {
+    for (a <- nextPieceRectangles.head.indices) {
+      enemyRectangles(nextPieceRectangles(a)(1)+currentY)(nextPieceRectangles(a)(0)+currentX).fill = "blue"
+    }
+  }
+
+  def paintEnemyPiece(nextPieceRectangles: List[Array[Int]], currentX: Int, currentY: Int): Unit = {
+    for (a <- nextPieceRectangles.indices) {
+      enemyRectangles(nextPieceRectangles(a)(1)+currentY)(nextPieceRectangles(a)(0)+currentX).fill = "blue"
+    }
+  }
+
+  def clearEnemyPiece(nextPieceRectangles: List[Array[Int]], currentX: Int, currentY: Int, enemy: Array[Array[Int]]): Unit ={
+    for (a <- nextPieceRectangles.indices) {
+      enemyRectangles(nextPieceRectangles(a)(1) + currentY)(nextPieceRectangles(a)(0) + currentX).fill = "white"
+    }
+    refreshEnemyBoard(enemy)
+  }
+
+  def refreshEnemyBoard(enemy: Array[Array[Int]]): Unit = {
+    for (row <- 0 until game.gameBoard.rows) {
+      for (col <- 0 until game.gameBoard.columns) {
+        // if it occupy, fill the right colour, otherwise make it white
+        if (enemy(row)(col) == 1) {
+          if (row >= game.gameBoard.rows - 3 && row <= game.gameBoard.rows - 1) {
+            if (col >= game.gameBoard.columns - 7 && col <= game.gameBoard.columns - 4)
+              enemyRectangles(row)(col).fill = "brown"
+            else
+              enemyRectangles(row)(col).fill = "lightgreen"
+          }
+          else if (row > 0)
+            enemyRectangles(row)(col).fill = "lightgreen"
+        }
+        // for branches
+        else if (enemy(row)(col) == 2)
+          enemyRectangles(row)(col).fill = "brown"
+        else {
+          if (row == 0) {
+            // at the very top filled with pink
+            enemyRectangles(row)(col).fill = "pink"
+          }
+          else if (col == 0 || col == game.gameBoard.columns - 1) {
+            // at both leftmost and rightmost filled with pink
+            enemyRectangles(row)(col).fill = "pink"
+          }
+          else if (row == game.gameBoard.rows - 1) {
+            // at the very bottom fill the row with pink except tree branch
+            if (col < game.gameBoard.columns - 7 || col > game.gameBoard.columns - 4)
+              enemyRectangles(row)(col).fill = "pink"
+          }
+          else
+            enemyRectangles(row)(col).fill = "white"
+        }
+      }
+    }
+  }
+
+
   // update own score and notify enemy current's score
   def updateScore(): Unit = {
     var scores = game.scores
@@ -275,7 +433,7 @@ class GaiaGameController(
 
   // Update enemy's score
   def addScore(text: String): Unit = {
-      enemyScore.setText(text)
+    enemyScore.setText(text)
   }
 
   // Update enemy's game over status
@@ -312,6 +470,7 @@ class GaiaGameController(
     // if nextPiece is empty, get new piece from randomPiece
     if (game.nextPiece.isEmpty) {
       game.nextPiece = game.randomPiece()
+      Client.userRef ! ChatClient.TellNextPiece(clientRef, game.nextPiece)
       for (a <- game.nextPiece.head.indices) {
         nextPieceRectangles(game.nextPiece.head(a)(1))(game.nextPiece.head(a)(0)+1).fill = "red"
       }
@@ -324,6 +483,7 @@ class GaiaGameController(
       for (a <- game.nextPiece.head.indices) {
         nextPieceRectangles(game.nextPiece.head(a)(1))(game.nextPiece.head(a)(0)+1).fill = "white"
       }
+      Client.userRef ! ChatClient.ClearNextPiece(clientRef)
       game.nextPiece = List()
       game.tetraminoes.currentZ = 0
       game.tetraminoes.currentX = 4
@@ -334,7 +494,7 @@ class GaiaGameController(
         timer.stop
         showPaused.setText("Your game has ended,\nplease wait for your opponent to finish.")
         Client.userRef ! ChatClient.SendGameOver(clientRef, gameOver, game.scores)
-1      }
+      }
 
       // End game after both players reach the termination criteria
       if (gameOver == true && gameOverOpponent == true){
@@ -366,6 +526,7 @@ class GaiaGameController(
       for (a <- game.currentPiece.indices) {
         rectangles(game.currentPiece(a)(1)+game.tetraminoes.currentY)(game.currentPiece(a)(0)+game.tetraminoes.currentX).fill = "blue"
       }
+      Client.userRef ! ChatClient.CurrentBoardPiece(clientRef, game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
     }
 
     if (leftPressed) {
@@ -373,6 +534,8 @@ class GaiaGameController(
       refreshBoard()
       paintPieceToBoard(game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
       leftPressed = false
+      Client.userRef ! ChatClient.RefreshEnemyBoard(clientRef, game.gameBoard.board)
+      Client.userRef ! ChatClient.PaintEnemyBoardPiece(clientRef, game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
     }
     if (rightPressed) {
       // go right
@@ -380,6 +543,8 @@ class GaiaGameController(
       refreshBoard()
       paintPieceToBoard(game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
       rightPressed = false
+      Client.userRef ! ChatClient.RefreshEnemyBoard(clientRef, game.gameBoard.board)
+      Client.userRef ! ChatClient.PaintEnemyBoardPiece(clientRef, game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
     }
     if (upPressed) {
       // rotate
@@ -388,6 +553,8 @@ class GaiaGameController(
         clearPieceFromBoard(game.currentPiece,game.tetraminoes.currentX,game.tetraminoes.currentY)
         game.currentPiece = game.tetraminoes.rotate(game.currentTetrad, game.tetraminoes.currentZ)
         paintPieceToBoard(game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
+        Client.userRef ! ChatClient.ClearEnemyBoardPiece(clientRef, game.currentPiece,game.tetraminoes.currentX,game.tetraminoes.currentY, game.gameBoard.board)
+        Client.userRef ! ChatClient.PaintEnemyBoardPiece(clientRef, game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
       }
       else
         collisionSoundEffect()
@@ -398,12 +565,16 @@ class GaiaGameController(
       refreshBoard()
       paintPieceToBoard(game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
       downPressed = false
+      Client.userRef ! ChatClient.RefreshEnemyBoard(clientRef, game.gameBoard.board)
+      Client.userRef ! ChatClient.PaintEnemyBoardPiece(clientRef, game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
     }
     if (enterPressed) {
       do {
         game.moveSet(0,1)
         refreshBoard()
         paintPieceToBoard(game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
+        Client.userRef ! ChatClient.RefreshEnemyBoard(clientRef, game.gameBoard.board)
+        Client.userRef ! ChatClient.PaintEnemyBoardPiece(clientRef, game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
       } while (game.currentPiece.nonEmpty)
       enterPressed = false
     }
@@ -415,11 +586,12 @@ class GaiaGameController(
       refreshBoard()
       paintPieceToBoard(game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
       time = t
+      Client.userRef ! ChatClient.RefreshEnemyBoard(clientRef, game.gameBoard.board)
+      Client.userRef ! ChatClient.PaintEnemyBoardPiece(clientRef, game.currentPiece, game.tetraminoes.currentX, game.tetraminoes.currentY)
     }
   })
 
   timer.start
-
 
 
 
