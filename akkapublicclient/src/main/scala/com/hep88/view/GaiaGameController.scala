@@ -94,6 +94,7 @@ class GaiaGameController(
       contentText = "Your score: " + game.scores.toString + "\nOpponent score: " + opponentScore.toString
     }
     Platform.runLater(alert.showAndWait())
+    showPaused.setText("Game Over!")
     gameOverSoundEffect()
   }
 
@@ -442,7 +443,9 @@ class GaiaGameController(
     opponentScore = score
   }
 
+  // special case draw
   def gameOverFinal(score: Int): Unit = {
+    updateScore()
     opponentScore = score
     serverRef map (_ ! ChatClient.GameCompleted(clientName, clientRef, ownName, ownRef))
     if (game.scores > opponentScore){
@@ -457,6 +460,15 @@ class GaiaGameController(
       val alert = new Alert(AlertType.Information){
         title = "Game over"
         headerText = "You Lost!"
+        contentText = "Your score: " + game.scores.toString + "\nOpponent score: " + opponentScore.toString
+      }
+      Platform.runLater(alert.showAndWait())
+      gameOverSoundEffect()
+    }
+    else if (game.scores == opponentScore){
+      val alert = new Alert(AlertType.Information){
+        title = "Game over"
+        headerText = "You Tied!"
         contentText = "Your score: " + game.scores.toString + "\nOpponent score: " + opponentScore.toString
       }
       Platform.runLater(alert.showAndWait())
@@ -490,6 +502,7 @@ class GaiaGameController(
       game.tetraminoes.currentY = 0
       game.currentPiece = game.currentTetrad.head
       if (game.checkGameOver()) {
+        updateScore()
         gameOver = true
         timer.stop
         showPaused.setText("Your game has ended,\nplease wait for your opponent to finish.")
@@ -498,6 +511,7 @@ class GaiaGameController(
 
       // End game after both players reach the termination criteria
       if (gameOver == true && gameOverOpponent == true){
+        updateScore()
         if (game.scores > opponentScore){
           timer.stop
           val alert = new Alert(AlertType.Information){
@@ -512,6 +526,15 @@ class GaiaGameController(
           val alert = new Alert(AlertType.Information){
             title = "Game over"
             headerText = "You Lost!"
+            contentText = "Your score: " + game.scores.toString + "\nOpponent score: " + opponentScore.toString
+          }
+          Platform.runLater(alert.showAndWait())
+          gameOverSoundEffect()
+        }
+        else if (game.scores == opponentScore){
+          val alert = new Alert(AlertType.Information){
+            title = "Game over"
+            headerText = "You Tied!"
             contentText = "Your score: " + game.scores.toString + "\nOpponent score: " + opponentScore.toString
           }
           Platform.runLater(alert.showAndWait())

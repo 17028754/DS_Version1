@@ -14,8 +14,9 @@ import scalafx.scene.control.Alert.AlertType
 @sfxml
 class MainWindowController(private val txtName: TextField, private var clientRef: ActorRef[ChatClient.Command], private var clientName: String,
 private val lblStatus: Label, private val listUser: ListView[User], private val listRules: ListView[User],
-private val listMessage: ListView[String],
-private val txtMessage: TextField) {
+private val listGameRoom: ListView[User]) {
+
+    var invGame: Boolean = true
 
     var startGame: Boolean = false
 
@@ -23,11 +24,12 @@ private val txtMessage: TextField) {
 
     val receivedText: ObservableBuffer[String] =  new ObservableBuffer[String]()
 
-    listMessage.items = receivedText
+    val membersInGame = new ObservableBuffer[User]()
 
     def handleJoin(action: ActionEvent): Unit = {
-        if(txtName != null)
+        if(txtName != null) {
           chatClientRef map (_ ! ChatClient.StartJoin(txtName.text()))
+        }
     }
 
     def displayStatus(text: String): Unit = {
@@ -37,37 +39,77 @@ private val txtMessage: TextField) {
     listUser.items = new ObservableBuffer[User]() ++= x
   }
 
+  def displayLeaveGameRoom(): Unit = {
+    invGame = true
+    startGame = false
+    new Alert(AlertType.Information) {
+      initOwner(stage)
+      title = "Information Dialog"
+      headerText = "A player has left the game room!"
+      contentText = "Please invite a player to start the game after your invitation is accepted."
+    }.showAndWait()
+  }
 
-  // Create game
-  def handleCreateGame(actionEvent: ActionEvent): Unit = {
-    // In case user selected own username or that the list was empty
-    if (listUser.selectionModel().selectedIndex.value < 0
-      || listUser.selectionModel().selectedItem.value.ref == Client.userRef){
-
-      // warning dialog
+  def handleLeaveGameRoom(action: ActionEvent): Unit = {
+    if (invGame == true){
       new Alert(AlertType.Warning) {
         initOwner(stage)
         title = "Warning Dialog"
-        headerText = "Unable to Invite to Game!"
-        contentText = "Please choose other player's username!"
+        headerText = "You are not in a game room!"
+        contentText = "Leave button only allows you to leave the game room\nthat you have joined after accepting the invitation."
       }.showAndWait()
     }
-    else {
-      // Store information for omission during game, and to notify client in cluster about game invitation
-      clientRef = listUser.selectionModel().selectedItem.value.ref
-      clientName = listUser.selectionModel().selectedItem.value.name
-      // Send invitation to client in cluster
-      Client.userRef ! ChatClient.SendInvitation(clientRef, txtName.text.value)
-      // Need to notify all the clients, call the function in ChatClient object that updates all the clients about a new game created
-      // At the moment, notify one selected client
+    else{
+      invGame = true
+      startGame = false
+      membersInGame.clear()
+      Client.userRef ! ChatClient.LeaveGameRoomList(clientRef, membersInGame.toList)
+    }
+  }
 
-      // notification dialog
-      new Alert(AlertType.Information){
+  // Special case to take note:
+  // 2. Implement a leave game feature, and update the list
+  // Create game
+  def handleCreateGame(actionEvent: ActionEvent): Unit = {
+    // Don't let user create/invite another player when user is already in a game room with another player
+    if (invGame == false){
+      new Alert(AlertType.Warning) {
         initOwner(stage)
-        title = "Information Dialog"
-        headerText = "Invitation sent!"
-        contentText = "Please wait for " + clientName + " to accept or reject your invite, you will be notified accordingly."
+        title = "Warning Dialog"
+        headerText = "You are already in a game room!"
+        contentText = "Please leave current game room to invite the player you want to play with!\nMax participant per game room: 2"
       }.showAndWait()
+    }
+    else{
+      // In case user selected own username or that the list was empty
+      if (listUser.selectionModel().selectedIndex.value < 0
+        || listUser.selectionModel().selectedItem.value.ref == Client.userRef){
+
+        // warning dialog
+        new Alert(AlertType.Warning) {
+          initOwner(stage)
+          title = "Warning Dialog"
+          headerText = "Unable to Invite to Game!"
+          contentText = "Please choose other player's username!"
+        }.showAndWait()
+      }
+      else {
+        // Store information for omission during game, and to notify client in cluster about game invitation
+        clientRef = listUser.selectionModel().selectedItem.value.ref
+        clientName = listUser.selectionModel().selectedItem.value.name
+        // Send invitation to client in cluster
+        Client.userRef ! ChatClient.SendInvitation(clientRef, txtName.text.value)
+        // Need to notify all the clients, call the function in ChatClient object that updates all the clients about a new game created
+        // At the moment, notify one selected client
+
+        // notification dialog
+        new Alert(AlertType.Information){
+          initOwner(stage)
+          title = "Information Dialog"
+          headerText = "Invitation sent!"
+          contentText = "Please wait for " + clientName + " to accept or reject your invite, you will be notified accordingly."
+        }.showAndWait()
+      }
     }
   }
 
@@ -91,6 +133,7 @@ private val txtMessage: TextField) {
                                   Client.userRef ! ChatClient.AcceptInvitation(actorRef)
                                   clientRef = actorRef
                                   clientName = name
+                                  invGame = false
 
         // Reject invitation
       case _ => Client.userRef ! ChatClient.RejectInvitation(actorRef)
@@ -99,8 +142,12 @@ private val txtMessage: TextField) {
 
   def displayInvitationResult(result: Boolean): Unit = {
     if(result == true){
-      chatClientRef map (_ ! ChatClient.GameOmission(clientName, clientRef, txtName.text.value, Client.userRef))
+//      chatClientRef map (_ ! ChatClient.GameOmission(clientName, clientRef, txtName.text.value, Client.userRef))
+      invGame = false
       startGame = true
+      membersInGame += User(clientName, clientRef)
+      membersInGame += User(txtName.text.value, Client.userRef)
+      Client.userRef ! ChatClient.UpdateGameRoomList(clientRef, membersInGame.toList)
       new Alert(AlertType.Information){
         initOwner(stage)
         title = "Information Dialog"
@@ -117,6 +164,10 @@ private val txtMessage: TextField) {
     }
   }
 
+  def updateGameRoom(x: Iterable[User]): Unit ={
+    listGameRoom.items = new ObservableBuffer[User]() ++= x
+  }
+
 
   // Initiate game to launch for both clients
   def startGame(actionEvent: ActionEvent): Unit = {
@@ -125,9 +176,10 @@ private val txtMessage: TextField) {
         initOwner(stage)
         title = "Warning Dialog"
         headerText = "Unable to Start Game!"
-        contentText = "Please invite other player to be eligible to start game!"
+        contentText = "Please invite other player to be eligible to start game!\nNote: Only people who send invitation can start the game."
       }.showAndWait()
     }else{
+      chatClientRef map (_ ! ChatClient.GameOmission(clientName, clientRef, txtName.text.value, Client.userRef))
       Client.userRef ! ChatClient.StartGame(clientRef)
     }
   }
@@ -142,11 +194,6 @@ private val txtMessage: TextField) {
     ClientRef.ownName = txtName.text.value
     ClientRef.serverRef = chatClientRef
     Client1
-  }
-
-
-  def addText(text: String): Unit = {
-      receivedText += text
   }
 
 }

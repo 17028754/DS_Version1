@@ -15,9 +15,6 @@ import akka.cluster.ClusterEvent.ReachableMember
 import akka.cluster.ClusterEvent.UnreachableMember
 import akka.cluster.ClusterEvent.MemberEvent
 import akka.actor.Address
-import com.hep88.model.GaiaGame
-import scalafx.scene.shape.Rectangle
-import scalafxml.core.{FXMLLoader, NoDependencyResolver}
 
 
 object ChatClient {
@@ -37,6 +34,12 @@ object ChatClient {
     final case class RejectInvitation(target: ActorRef[ChatClient.Command]) extends Command
     // Display accepted/rejected invitation
     final case class DisplayInvitationResult(result: Boolean) extends Command
+    // Update list to show player's name in the game room
+    final case class UpdateGameRoomList(target: ActorRef[ChatClient.Command], list: Iterable[User]) extends Command
+    final case class ReceiveUpdateGameRoomList(list: Iterable[User]) extends Command
+    // Update game room list when a player choose to leave game room
+    final case class LeaveGameRoomList(target: ActorRef[ChatClient.Command], list: Iterable[User]) extends Command
+    final case class ReceiveLeaveGameRoomList(list: Iterable[User]) extends Command
 
     // Starting game
     final case class StartGame(target: ActorRef[ChatClient.Command]) extends Command
@@ -97,7 +100,6 @@ object ChatClient {
   private case class ListingResponse(listing: Receptionist.Listing) extends Command
   private final case class MemberChange(event: MemberEvent) extends Command
   private final case class ReachabilityChange(reachabilityEvent: ReachabilityEvent) extends Command
-  val members = new ObservableHashSet[User]()
 
   val unreachables = new ObservableHashSet[Address]()
     unreachables.onChange{(ns, _) =>
@@ -106,13 +108,19 @@ object ChatClient {
         }
     }
 
+  val members = new ObservableHashSet[User]()
   members.onChange{(ns, _) =>
     Platform.runLater {
         Client.control.updateList(ns.toList.filter(y => ! unreachables.exists (x => x == y.ref.path.address)))
     }  
   }
 
-
+  val membersInGameRoom = new ObservableHashSet[User]()
+  membersInGameRoom.onChange{(ns, _) =>
+    Platform.runLater {
+      Client.control.updateGameRoom(ns.toList)
+    }
+  }
 
 
 //chat protocol
@@ -125,6 +133,12 @@ object ChatClient {
 
     def messageStarted(): Behavior[ChatClient.Command] = Behaviors.receive[ChatClient.Command] { (context, message) => 
         message match {
+
+            // Updating the list of players connected in the game lobby
+            case MemberList(list: Iterable[User]) =>
+              members.clear()
+              members ++= list
+              Behaviors.same
             // Sending invitation
             case SendInvitation(target, name) =>
                 target ! ReceiveInvitation(name, context.self)
@@ -149,6 +163,30 @@ object ChatClient {
                 Client.control.displayInvitationResult(result)
               }
               Behaviors.same
+             // Update game room list when player accept the invitation
+            case UpdateGameRoomList(target, list) =>
+              target ! ReceiveUpdateGameRoomList(list)
+              membersInGameRoom.clear()
+              membersInGameRoom ++= list
+              Behaviors.same
+            case ReceiveUpdateGameRoomList(list) =>
+              membersInGameRoom.clear()
+              membersInGameRoom ++= list
+              Behaviors.same
+             // Update game room list when a player leaves the game room
+            case LeaveGameRoomList(target, list) =>
+              target ! ReceiveLeaveGameRoomList(list)
+              membersInGameRoom.clear()
+              membersInGameRoom ++= list
+            Behaviors.same
+            case ReceiveLeaveGameRoomList(list) =>
+              membersInGameRoom.clear()
+              membersInGameRoom ++= list
+              Platform.runLater{
+                Client.control.displayLeaveGameRoom()
+              }
+              Behaviors.same
+
 
             // Starting game
             case StartGame(target) =>
@@ -228,9 +266,6 @@ object ChatClient {
               remoteOpt.map ( _! ChatServer.GameCompleted(name1, target1, name2, target2))
               Behaviors.same
 
-
-
-
               // Animation - tell next piece
             case TellNextPiece(target, nextPiece)  =>
               target ! ReceiveNextPiece(nextPiece)
@@ -288,16 +323,6 @@ object ChatClient {
                 Client1.control.clearEnemyPiece(currentPiece, currentX, currentY, board)
               }
               Behaviors.same
-
-
-
-
-
-              // Updating the list of players connected in the game lobby
-            case MemberList(list: Iterable[User]) =>
-                members.clear()
-                members ++= list
-                Behaviors.same
         }
     }.receiveSignal {
         case (context, PostStop) =>

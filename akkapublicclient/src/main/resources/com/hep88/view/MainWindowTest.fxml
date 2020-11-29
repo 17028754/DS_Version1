@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hep88.view.MainWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hep88.view.MainWindowController">
    <center>
       <AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="landingBackground" stylesheets="@../style/style.css" BorderPane.alignment="CENTER">
          <children>
@@ -24,10 +24,10 @@
                </rowConstraints>
                <children>
                   <Button mnemonicParsing="false" onAction="#handleCreateGame" text="Invite" textAlignment="CENTER" />
-                  <Button mnemonicParsing="false" prefWidth="51.0" text="Leave" GridPane.columnIndex="1" />
+                  <Button mnemonicParsing="false" onAction="#handleLeaveGameRoom" prefWidth="51.0" text="Leave" GridPane.columnIndex="1" />
                </children>
             </GridPane>
-            <ListView fx:id="listMessage" layoutX="473.0" layoutY="456.0" prefHeight="170.0" prefWidth="335.0" />
+            <ListView fx:id="listGameRoom" layoutX="473.0" layoutY="456.0" prefHeight="170.0" prefWidth="335.0" />
             <ListView fx:id="listUser" layoutX="473.0" layoutY="280.0" prefHeight="109.0" prefWidth="335.0" />
             <ListView fx:id="listRules" layoutX="62.0" layoutY="44.0" prefHeight="141.0" prefWidth="200.0" />
             <AnchorPane layoutX="441.0" layoutY="14.0" prefHeight="200.0" prefWidth="400.0" styleClass="background" stylesheets="@../style/logo.css" />
